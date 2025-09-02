@@ -124,7 +124,32 @@ Access: `http://localhost:3000`
 - Setup .env files
 - Created `README.md` and `PRD.md` in `/docs`
 
+### ✅ Day 2 Summary
 
+- Initialized Prisma and connected to local PostgreSQL via .env.local
+- Updated Item model to use UUID as primary key
+- Configured Prisma client output to app/generated/prisma
+- Added dotenv-cli for loading DATABASE_URL from .env.local
+- Created lib/prisma.ts for safe Prisma client instance
+- Ran initial migration to create Item table
+
+### ✅ Day 3 & 4 Summary
+
+feat: implement full CRUD API with Prisma and add frontend item management UI
+
+- Completed CRUD API for items (create, read, update, delete) using Prisma ORM
+- Integrated API routes in Next.js for item management
+- Built ItemForm component for adding new items
+- Built ItemList component to fetch and display items from API
+- Applied Tailwind CSS for styling
+
+### ✅ Day 5 Summary
+
+### ✅ Day 6 Summary
+
+### ✅ Day 7 Summary
+
+### ✅ Day 8 Summary
 ---
 
 ## 🧠 How to Contribute
