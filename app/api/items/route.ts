@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth"; 
 
 const createItemSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
@@ -8,6 +10,12 @@ const createItemSchema = z.object({
 });
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  // Day 7: use tenantId here: const tenantId = (session.user as any).tenantId;
   try {
     const items = await prisma.item.findMany({ orderBy: { createdAt: "desc" } });
     return NextResponse.json(items);
@@ -18,6 +26,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  // Day 7: use tenantId here: const tenantId = (session.user as any).tenantId;
   try {
     const body = await req.json();
     const parsed = createItemSchema.safeParse(body);

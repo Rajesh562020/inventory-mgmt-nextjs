@@ -22,3 +22,12 @@ model Item {
   updatedAt DateTime @updatedAt
 }
 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  // Day 7: tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -126,6 +126,26 @@ Access: `http://localhost:3000`
 
 ### ✅ Day 2 Summary
 
+```bash
+
+    npm install prisma --save-dev
+    npm install @prisma/client
+    npx prisma init
+
+    npm install dotenv-cli --save-dev
+
+    npm run prisma:migrate --name init
+
+    npm run prisma:generate
+    npm run prisma:migrate -- -n add_item_model
+    npm run prisma:migrate -- -n add_user
+    (For every change in the schema)
+
+    npm run prisma:studio
+
+
+
+```
 - Initialized Prisma and connected to local PostgreSQL via .env.local
 - Updated Item model to use UUID as primary key
 - Configured Prisma client output to app/generated/prisma
@@ -135,6 +155,11 @@ Access: `http://localhost:3000`
 
 ### ✅ Day 3 & 4 Summary
 
+```bash
+
+  npm i zod
+
+```
 feat: implement full CRUD API with Prisma and add frontend item management UI
 
 - Completed CRUD API for items (create, read, update, delete) using Prisma ORM
