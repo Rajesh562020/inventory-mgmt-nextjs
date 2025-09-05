@@ -14,12 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Item {
-  id        String   @id @default(uuid()) @db.Uuid
+model Tenant {
+  id        String  @id @default(uuid())
   name      String
-  quantity  Int      @default(0)
+  users     User[]
+  items     Item[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model User {
@@ -27,7 +27,18 @@ model User {
   email     String   @unique
   name      String?
   password  String
-  // Day 7: tenantId  String
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id        String   @id @default(uuid())
+  name      String
+  quantity  Int      @default(0)
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

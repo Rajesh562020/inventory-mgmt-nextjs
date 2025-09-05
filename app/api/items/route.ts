@@ -15,10 +15,11 @@ export async function GET() {
   if (!session?.user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-
+  
   // Day 7: use tenantId here: const tenantId = (session.user as any).tenantId;
+  const tenantId = session.user.tenantId;
   try {
-    const items = await prisma.item.findMany({ orderBy: { createdAt: "desc" } });
+    const items = await prisma.item.findMany({  where: { tenantId }, orderBy: { createdAt: "desc" } });
     return NextResponse.json(items);
   } catch (err) {
     console.error("GET /api/items error:", err);
@@ -33,6 +34,7 @@ const session = await getServerSession(authOptions);
   }
 
   // Day 7: use tenantId here: const tenantId = (session.user as any).tenantId;
+  const tenantId = session.user.tenantId;
   try {
     const body = await req.json();
     const parsed = createItemSchema.safeParse(body);
@@ -41,7 +43,7 @@ const session = await getServerSession(authOptions);
     }
 
     const { name, quantity } = parsed.data;
-    const item = await prisma.item.create({ data: { name, quantity } });
+    const item = await prisma.item.create({ data: { name, quantity, tenantId  } });
     return NextResponse.json(item, { status: 201 });
   } catch (err) {
     console.error("POST /api/items error:", err);

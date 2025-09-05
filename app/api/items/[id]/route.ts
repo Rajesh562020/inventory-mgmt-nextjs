@@ -20,11 +20,12 @@ export async function GET(_req: Request, { params }: Params) {
   if (!session?.user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+  const tenantId = session.user.tenantId;
   const parsedId = idParam.safeParse(params.id);
   if (!parsedId.success) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
 
   try {
-    const item = await prisma.item.findUnique({ where: { id: parsedId.data } });
+    const item = await prisma.item.findFirst({ where: { id: parsedId.data, tenantId  } });
     if (!item) return NextResponse.json({ message: "Item not found" }, { status: 404 });
     return NextResponse.json(item);
   } catch (err) {
@@ -39,6 +40,7 @@ export async function PUT(req: Request, { params }: Params) {
   if (!session?.user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+  const tenantId = session.user.tenantId;
   const parsedId = idParam.safeParse(params.id);
   if (!parsedId.success) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
 
@@ -50,10 +52,13 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     try {
-      const updated = await prisma.item.update({
-        where: { id: parsedId.data },
+      const updated = await prisma.item.updateMany({
+        where: { id: parsedId.data, tenantId  },
         data: parsed.data,
       });
+      if (updated.count === 0) {
+      return NextResponse.json({ message: "Item not found" }, { status: 404 });
+    }
       return NextResponse.json(updated);
     } catch (e: any) {
       if (e?.code === "P2025") return NextResponse.json({ message: "Item not found" }, { status: 404 });
@@ -71,12 +76,16 @@ export async function DELETE(_req: Request, { params }: Params) {
   if (!session?.user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+  const tenantId = session.user.tenantId;
   const parsedId = idParam.safeParse(params.id);
   if (!parsedId.success) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
 
   try {
     try {
-      const deleted = await prisma.item.delete({ where: { id: parsedId.data } });
+      const deleted = await prisma.item.deleteMany({ where: { id: parsedId.data, tenantId  } });
+      if (deleted.count === 0) {
+      return NextResponse.json({ message: "Item not found" }, { status: 404 });
+    }
       return NextResponse.json(deleted);
     } catch (e: any) {
       if (e?.code === "P2025") return NextResponse.json({ message: "Item not found" }, { status: 404 });

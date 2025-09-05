@@ -143,7 +143,7 @@ Access: `http://localhost:3000`
 
     npm run prisma:studio
 
-
+    npm run prisma:reset
 
 ```
 - Initialized Prisma and connected to local PostgreSQL via .env.local
