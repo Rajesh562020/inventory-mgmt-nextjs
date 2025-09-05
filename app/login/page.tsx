@@ -57,18 +57,36 @@ function RegisterBox() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const register = async () => {
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    });
-    if (res.ok) alert("Registered! Now sign in.");
-    else {
-      const json = await res.json().catch(()=>({message:'Register failed'}));
-      alert("Register failed: " + (json.message || "unknown"));
-    }
-  };
+  const router = useRouter();
+  
+const register = async () => {
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password })
+  });
+  if (!res.ok) {
+    const json = await res.json().catch(()=>({message:'Register failed'}));
+    alert("Register failed: " + (json.message || "unknown"));
+    return;
+  }
+  // Auto-login
+  const sign = await signIn("credentials", { redirect: false, email, password });
+  if (sign?.ok) router.push("/");
+  else alert("Registered but automatic login failed — please sign in.");
+};
+  // const register = async () => {
+  //   const res = await fetch("/api/register", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({ name, email, password })
+  //   });
+  //   if (res.ok) alert("Registered! Now sign in.");
+  //   else {
+  //     const json = await res.json().catch(()=>({message:'Register failed'}));
+  //     alert("Register failed: " + (json.message || "unknown"));
+  //   }
+  // };
   return (
     <div className="pt-3 border-t text-sm">
       <div className="font-medium mb-2">New here? (dev only)</div>

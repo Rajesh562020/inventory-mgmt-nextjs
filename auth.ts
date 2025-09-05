@@ -1,7 +1,9 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { User } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
 // Explicitly type options as NextAuthOptions
 export const authOptions: NextAuthOptions = {
@@ -34,12 +36,12 @@ export const authOptions: NextAuthOptions = {
       token,
       user,
     }: {
-      token: any; // you can refine later
-      user?: any;
+      token: JWT; // you can refine later
+      user?: User;
     }) {
       if (user) {
         token.id = user.id;
-        token.email = user.email;
+        token.email = user.email ?? undefined;
       }
       return token;
     },
@@ -47,12 +49,12 @@ export const authOptions: NextAuthOptions = {
       session,
       token,
     }: {
-      session: any; // can extend Session type later
-      token: any;
+      session: Session; // can extend Session type later
+      token: JWT;
     }) {
       if (session.user) {
-        (session.user as any).id = token.id ?? token.sub ?? null;
-        (session.user as any).email = token.email ?? null;
+        session.user.id = (token.id ?? token.sub) as string;
+        session.user.email = token.email ?? undefined;
       }
       return session;
     },

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth"; 
 
 type Params = { params: { id: string } };
 
@@ -13,6 +15,11 @@ const updateItemSchema = z
   .refine((data) => Object.keys(data).length > 0, { message: "Provide at least one field to update" });
 
 export async function GET(_req: Request, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  console.log("Session in single GET /api/items:???????", session);
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const parsedId = idParam.safeParse(params.id);
   if (!parsedId.success) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
 
@@ -27,6 +34,11 @@ export async function GET(_req: Request, { params }: Params) {
 }
 
 export async function PUT(req: Request, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  console.log("Session in PUT /api/items:???????", session);
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const parsedId = idParam.safeParse(params.id);
   if (!parsedId.success) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
 
@@ -54,6 +66,11 @@ export async function PUT(req: Request, { params }: Params) {
 }
 
 export async function DELETE(_req: Request, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  console.log("Session in DELETE /api/items:???????", session);
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const parsedId = idParam.safeParse(params.id);
   if (!parsedId.success) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
 
